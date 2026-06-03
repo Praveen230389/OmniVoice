@@ -200,55 +200,63 @@ export default function App() {
               <Code size={14} /> Connection
             </h2>
             <div className="space-y-2">
-              <label className="text-xs text-neutral-400 font-medium">Ngrok Backend URL (If using this UI)</label>
+              <label className="text-xs text-neutral-400 font-medium">Backend API URL</label>
               <input 
                 type="text" 
                 value={backendUrl}
                 onChange={(e) => setBackendUrl(e.target.value)}
-                placeholder="https://xxxx-xxx.ngrok.io"
+                placeholder="https://xxxx-xxxx.trycloudflare.com"
                 className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 outline-none transition-colors"
               />
               <div className="text-[10px] text-neutral-500 space-y-2 mt-2">
-                <p><strong>To use this custom UI with Colab:</strong></p>
-                <p>Copy and run this in a Colab block:</p>
+                <p><strong>To use this custom UI with Colab (No tokens needed!):</strong></p>
+                <p>Copy and run this in a single Colab cell. It uses Cloudflare for free tunneling:</p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] mt-1 overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
 {`# RUN THIS IN A GOOGLE COLAB BLOCK
 
-# 1. Install OmniVoice and tools
-!pip install -q omnivoice pyngrok
-!npm install -q -g localtunnel
+# 1. Install OmniVoice
+!pip install -q omnivoice
 
-# 2. Clone YOUR uploaded React UI repo
+# 2. Clone YOUR React UI repo
 !rm -rf /content/MyUI
 !git clone https://github.com/Praveen230389/OmniVoice.git /content/MyUI
 !cd /content/MyUI && npm install
 
 import subprocess
 import time
-from pyngrok import ngrok
 
-# 3. Setup Ngrok for the Backend API
-ngrok.set_auth_token("YOUR_NGROK_TOKEN")
-api_url = ngrok.connect(8000).public_url
-
-print("\\n" + "="*50)
-print("✅ YOUR BACKEND API URL IS:")
-print(api_url)
-print("(Copy this to paste into the 'Connection' tab in the UI)")
-print("="*50 + "\\n")
+# 3. Download Cloudflare Tunnel (100% Free, No Token Needed)
+!wget -q -c https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+!chmod +x cloudflared-linux-amd64
 
 # 4. Start Python Backend in background
 subprocess.Popen(["omnivoice-demo", "--ip", "0.0.0.0", "--port", "8000"])
 
-# 5. Start React Frontend in background (Vite)
+# 5. Start React Frontend in background
 subprocess.Popen(["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"], cwd="/content/MyUI")
-time.sleep(5)
 
-print("✅ CLICK THE LINK BELOW TO OPEN YOUR REACT UI:")
-!lt --port 3000`}
+# 6. Expose App & API via Cloudflare Tunnels
+print("Starting tunnels, please wait 10 seconds...")
+subprocess.Popen(["./cloudflared-linux-amd64", "tunnel", "--url", "http://127.0.0.1:8000"], stderr=open('api_tunnel.log', 'w'))
+subprocess.Popen(["./cloudflared-linux-amd64", "tunnel", "--url", "http://127.0.0.1:3000"], stderr=open('ui_tunnel.log', 'w'))
+
+time.sleep(10)
+
+api_url = !grep -o 'https://.*\.trycloudflare.com' api_tunnel.log
+ui_url  = !grep -o 'https://.*\.trycloudflare.com' ui_tunnel.log
+
+print("\\n" + "="*60)
+if api_url:
+    print("✅ BACKEND API URL (Paste this into the UI Connection tab):")
+    print(api_url[0])
+
+if ui_url:
+    print("\\n✅ REACT UI URL (Click this to open your app):")
+    print(ui_url[0])
+print("="*60 + "\\n")`}
                 </pre>
                 
-                <p className="mt-3 text-indigo-400 border-t border-neutral-800 pt-2 mb-1"><strong>To run official UI directly without Ngrok:</strong></p>
+                <p className="mt-3 text-indigo-400 border-t border-neutral-800 pt-2 mb-1"><strong>To run official UI directly:</strong></p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
 {`!pip install omnivoice
 
