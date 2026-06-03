@@ -212,26 +212,24 @@ export default function App() {
                 <p><strong>To use this custom UI with Colab:</strong></p>
                 <p>Copy and run this in a Colab block:</p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] mt-1 overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
-{`!rm -rf /content/OmniVoice
-!git clone https://github.com/k2-fsa/OmniVoice.git /content/OmniVoice
-!cd /content/OmniVoice && pip install -e .
-!pip install pyngrok
+{`!pip install setuptools uv
+!pip install git+https://github.com/k2-fsa/OmniVoice.git
+!pip install pyngrok fastapi uvicorn
 
 import os
 from pyngrok import ngrok
 ngrok.set_auth_token("YOUR_NGROK_TOKEN")
 print("YOUR API URL IS:", ngrok.connect(8000).public_url)
 
-!cd /content/OmniVoice && omnivoice-demo --ip 0.0.0.0 --port 8000`}
+!omnivoice-demo --ip 0.0.0.0 --port 8000`}
                 </pre>
                 
                 <p className="mt-3 text-indigo-400 border-t border-neutral-800 pt-2 mb-1"><strong>To run official UI directly without Ngrok:</strong></p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
-{`!rm -rf /content/OmniVoice
-!git clone https://github.com/k2-fsa/OmniVoice.git /content/OmniVoice
-!cd /content/OmniVoice && pip install -e .
+{`!pip install setuptools uv
+!pip install git+https://github.com/k2-fsa/OmniVoice.git
 
-!cd /content/OmniVoice && omnivoice-demo --share`}
+!omnivoice-demo --share`}
                 </pre>
               </div>
             </div>
