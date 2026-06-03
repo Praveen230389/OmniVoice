@@ -211,7 +211,9 @@ export default function App() {
               <div className="text-[10px] text-neutral-500 space-y-2 mt-2">
                 <p><strong>To use this custom UI with Colab:</strong></p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] mt-1 overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
-{`!git clone https://github.com/k2-fsa/OmniVoice.git
+{`%cd /content
+!rm -rf OmniVoice
+!git clone https://github.com/k2-fsa/OmniVoice.git
 %cd /content/OmniVoice
 !pip install -e .
 !pip install pyngrok
@@ -226,7 +228,9 @@ print("YOUR API URL IS:", ngrok.connect(8000).public_url)
                 
                 <p className="mt-3 text-indigo-400 border-t border-neutral-800 pt-2 mb-1"><strong>To run official UI directly without Ngrok:</strong></p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
-{`!git clone https://github.com/k2-fsa/OmniVoice.git
+{`%cd /content
+!rm -rf OmniVoice
+!git clone https://github.com/k2-fsa/OmniVoice.git
 %cd /content/OmniVoice
 !pip install -e .
 
