@@ -212,14 +212,40 @@ export default function App() {
                 <p><strong>To use this custom UI with Colab:</strong></p>
                 <p>Copy and run this in a Colab block:</p>
                 <pre className="bg-neutral-900 border border-neutral-800 p-2 rounded text-[9.5px] mt-1 overflow-x-auto text-neutral-300 select-all font-mono leading-relaxed">
-{`!pip install omnivoice pyngrok
+{`# RUN THIS IN A GOOGLE COLAB BLOCK
 
-import os
+# 1. Install OmniVoice and tools
+!pip install -q omnivoice pyngrok
+!npm install -q -g localtunnel
+
+# 2. Clone YOUR uploaded React UI repo
+!rm -rf /content/MyUI
+!git clone https://github.com/Praveen230389/OmniVoice.git /content/MyUI
+!cd /content/MyUI && npm install
+
+import subprocess
+import time
 from pyngrok import ngrok
-ngrok.set_auth_token("YOUR_NGROK_TOKEN")
-print("YOUR API URL IS:", ngrok.connect(8000).public_url)
 
-!omnivoice-demo --ip 0.0.0.0 --port 8000`}
+# 3. Setup Ngrok for the Backend API
+ngrok.set_auth_token("YOUR_NGROK_TOKEN")
+api_url = ngrok.connect(8000).public_url
+
+print("\\n" + "="*50)
+print("✅ YOUR BACKEND API URL IS:")
+print(api_url)
+print("(Copy this to paste into the 'Connection' tab in the UI)")
+print("="*50 + "\\n")
+
+# 4. Start Python Backend in background
+subprocess.Popen(["omnivoice-demo", "--ip", "0.0.0.0", "--port", "8000"])
+
+# 5. Start React Frontend in background (Vite)
+subprocess.Popen(["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"], cwd="/content/MyUI")
+time.sleep(5)
+
+print("✅ CLICK THE LINK BELOW TO OPEN YOUR REACT UI:")
+!lt --port 3000`}
                 </pre>
                 
                 <p className="mt-3 text-indigo-400 border-t border-neutral-800 pt-2 mb-1"><strong>To run official UI directly without Ngrok:</strong></p>
